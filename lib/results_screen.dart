@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:myapp/data/quizz.dart';
 import 'package:myapp/main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:myapp/questions_summary.dart';
 
 
 class ResultsScreen extends StatelessWidget {
@@ -18,6 +19,25 @@ List<String> getCorrectAnswers(){
   return corAns;
 }
 
+List<Map<String, Object>> getSummaryData(){
+  List<Map<String, Object>> summaryData = [];
+  List<String> correctAnswers = getCorrectAnswers();
+  for (var i = 0; i < selectedAnswers.length; i++) {
+    bool is_correct = selectedAnswers[i] == correctAnswers[i];
+    summaryData.add(
+      {
+        'question_id': i,
+        'question': questions[i].question,
+        'user_answer': selectedAnswers[i],
+        'correct_answer': correctAnswers[i],
+        'is_correct': is_correct
+      }
+    );
+  }
+
+  return summaryData;
+}
+
 int chackAnswers(answers, corAnswers){
   int correctAmount = 0;
   for(int i=0; i<selectedAnswers.length; i++){
@@ -32,6 +52,9 @@ int chackAnswers(answers, corAnswers){
   Widget build(BuildContext context) {
     List<String> correctAnswers = getCorrectAnswers();
     int correctAnsAmount = chackAnswers(selectedAnswers, correctAnswers);
+
+    List<Map<String, Object>> summaryData = getSummaryData();
+
     return MaterialApp(
       home: Scaffold(
     body: Container(
@@ -56,6 +79,10 @@ int chackAnswers(answers, corAnswers){
           const SizedBox(
             height: 30,
           ),  
+          QuestionsSummary(data: summaryData),
+          const SizedBox(
+            height: 30,
+          ),
           OutlinedButton.icon(
               onPressed: () {
                 Navigator.push(context, 
